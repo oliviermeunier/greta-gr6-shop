@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} - Bienvenue !{% endblock %}
+
+{% block body %}
+
+    <h2>Nos produits</h2>
+
+    <div class="row">
+        {% for product in products %}
+            <div class="col-3">
+                <div class="card border-primary mb-3" style="max-width: 20rem;">
+                    <img src="{{ product.thumbnail }}" alt="">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ product.name }}</h3>
+                        <h4>{{ (product.price/100)|format_currency('EUR', locale='fr') }}</h4>
+                        <span class="badge bg-primary">{{ product.category.name }}</span>
+                        <p class="card-text">{{ product.description|slice(0,150) }}</p>
+                        <a href="{{ path('product_show', {'slug': product.slug}) }}" class="btn btn-primary">Voir ce produit</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
