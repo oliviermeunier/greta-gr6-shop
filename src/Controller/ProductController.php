@@ -6,7 +6,6 @@ use App\Entity\Review;
 use DateTimeImmutable;
 use App\Entity\Product;
 use App\Form\ReviewType;
-use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
