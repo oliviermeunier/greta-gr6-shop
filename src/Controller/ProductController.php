@@ -16,8 +16,11 @@ class ProductController extends AbstractController {
     {
         // $product = $productRepository->findOneBy(['slug' => $slug]);
 
+        $reviewForm = $this->createForm(ReviewType::class);
+
         return $this->render('product/show.html.twig', [
-            'product' => $product
+            'product' => $product,
+            'reviewForm' => $reviewForm->createView()
         ]);
     }
 }
