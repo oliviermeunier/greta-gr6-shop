@@ -53,6 +53,9 @@ class AppFixtures extends Fixture
     
             $createdAt = $faker->dateTimeBetween('-5 years', 'now');
             $category->setCreatedAt(DateTimeImmutable::createFromMutable($createdAt));
+
+            $slug = $this->slugger->slugify($category->getName());
+            $category->setSlug($slug);
     
             // On stocke notre entité Category dans le tableau d'objets Category
             $categories[] = $category;

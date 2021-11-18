@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Review;
 use DateTimeImmutable;
 use App\Entity\Product;
+use App\Entity\Category;
 use App\Form\ReviewType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +41,16 @@ class ProductController extends AbstractController {
         return $this->render('product/show.html.twig', [
             'product' => $product,
             'reviewForm' => $reviewForm->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/category/{slug}", name="product_category")
+     */
+    public function category(Category $category)
+    {
+        return $this->render('product/category.html.twig', [
+            'category' => $category
         ]);
     }
 }
