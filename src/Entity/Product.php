@@ -56,6 +56,7 @@ class Product
 
     /**
      * @ORM\OneToMany(targetEntity=Review::class, mappedBy="product", orphanRemoval=true)
+     * @ORM\OrderBy({"createdAt" = "DESC"})
      */
     private $reviews;
 

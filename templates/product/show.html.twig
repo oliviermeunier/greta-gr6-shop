@@ -27,4 +27,22 @@
 			{{ form_end(reviewForm) }}
 		</div>
     </div>
+
+	<h2 class="mt-3">Ce qu'en pensent les internautes</h2>
+	<div class="row">
+		<div class="col-8">
+			{% if product.reviews|length > 0 %}
+				{% for review in product.reviews %}
+					<div>
+						<h3>{{ review.nickname }}</h3>
+						<h4>Note : {{ review.grade }}/5</h4>
+						<em>Ajouté le {{ review.createdAt|date('d/m/Y à H:i') }}</em>
+						<p>{{ review.content }}</p>
+					</div>
+				{% endfor %}
+			{% else %} 
+				<p>Soyez le premier à donner votre avis sur ce produit !</p>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}

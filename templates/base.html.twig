@@ -22,7 +22,7 @@
             {# Affichage des messages flash #}
             {% for type, messages in app.flashes %} 
                 {% for message in messages %}
-                    <p class="alert alert-{{ type }} mt-3>{{ message }}</p>
+                    <p class="alert alert-{{ type }} mt-3">{{ message }}</p>
                 {% endfor %}
             {% endfor %}
 
