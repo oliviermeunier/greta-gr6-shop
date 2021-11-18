@@ -23,7 +23,7 @@ class ProductController extends AbstractController {
         $reviewForm = $this->createForm(ReviewType::class, $review); // On crée le formulaire en lui associant notre objet $review
         $reviewForm->handleRequest($request); // On transmet les données de la requête au formulaire
 
-        if ($reviewForm->isSubmitted() && $reviewForm->isValid()) { // Si le formulaire est soumis... 
+        if ($reviewForm->isSubmitted() && $reviewForm->isValid()) { // Si le formulaire est soumis ET valide... 
 
             // $review contient déjà les 3 champs du formulaire : nickname, content et grade
             $review->setCreatedAt(new DateTimeImmutable()); // on le complète avec la date du jour

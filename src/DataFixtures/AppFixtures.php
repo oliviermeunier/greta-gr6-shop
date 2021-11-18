@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\User;
 use DateTimeImmutable;
 use App\Entity\Product;
 use Liior\Faker\Prices;
@@ -12,13 +13,16 @@ use Bezhanov\Faker\Provider\Commerce;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private $slugger;
+    private $hasher;
 
-    public function __construct(Slugify $slugger)
+    public function __construct(Slugify $slugger, UserPasswordHasherInterface $hasher)
     {
+        $this->hasher = $hasher;
         $this->slugger = $slugger;
     }
 
@@ -84,6 +88,20 @@ class AppFixtures extends Fixture
             $product->setSlug($slug);
 
             $manager->persist($product);
+        }
+
+        /////////////
+        // USER //
+        /////////////
+        for ($i=1; $i <= 10; $i++) {
+
+            $user = new User();
+            $user->setEmail("user$i@gmail.com");
+            $user->setPassword($this->hasher->hashPassword($user, 'password'));
+            $user->setFirstname($faker->firstName());
+            $user->setLastname($faker->lastName());
+
+            $manager->persist($user);
         }
 
         // On demande au manager d'exécuter toutes les requêtes SQL
