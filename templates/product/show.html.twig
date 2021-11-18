@@ -21,9 +21,9 @@
 	<h2 class="mt-3">Donnez votre avis</h2>
 	<div class="row">
 		<div class="col-4">
-			{{ form_start(reviewForm) }}
+			{{ form_start(reviewForm, {'attr':{'novalidate':'novalidate'}}) }}
 			{{ form_widget(reviewForm) }}
-			<button type="submit">Enregistrer</button>
+			<button class="btn btn-primary" type="submit">Enregistrer</button>
 			{{ form_end(reviewForm) }}
 		</div>
     </div>
