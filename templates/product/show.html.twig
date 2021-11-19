@@ -19,14 +19,19 @@
 	</div>
 
 	<h2 class="mt-3">Donnez votre avis</h2>
-	<div class="row">
-		<div class="col-4">
-			{{ form_start(reviewForm, {'attr':{'novalidate':'novalidate'}}) }}
-			{{ form_widget(reviewForm) }}
-			<button class="btn btn-primary" type="submit">Enregistrer</button>
-			{{ form_end(reviewForm) }}
+
+	{% if app.user %}
+		<div class="row">
+			<div class="col-4">
+				{{ form_start(reviewForm, {'attr':{'novalidate':'novalidate'}}) }}
+				{{ form_widget(reviewForm) }}
+				<button class="btn btn-primary" type="submit">Enregistrer</button>
+				{{ form_end(reviewForm) }}
+			</div>
 		</div>
-    </div>
+	{% else %}
+		<p>Pour ajouter un avis vous devez <a href="{{ path('security_login') }}">vous connecter</a> ou <a href="#">créer un compte</a></p>
+	{% endif %}
 
 	<h2 class="mt-3">Ce qu'en pensent les internautes</h2>
 	<div class="row">

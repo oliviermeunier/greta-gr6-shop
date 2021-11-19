@@ -19,7 +19,13 @@ class ProductController extends AbstractController {
      */
     public function show(Product $product, Request $request, EntityManagerInterface $manager)
     {
+        $user = $this->getUser(); // On récupère l'utilisateur connecté
         $review = new Review(); // On crée un objet Review qui contiendra l'éventuel nouvel avis si l'internaute remplit le formulaire
+       
+        if ($user) {
+            $review->setNickname($user->getFullName());
+        } 
+
         $reviewForm = $this->createForm(ReviewType::class, $review); // On crée le formulaire en lui associant notre objet $review
         $reviewForm->handleRequest($request); // On transmet les données de la requête au formulaire
 
@@ -28,6 +34,7 @@ class ProductController extends AbstractController {
             // $review contient déjà les 3 champs du formulaire : nickname, content et grade
             $review->setCreatedAt(new DateTimeImmutable()); // on le complète avec la date du jour
             $review->setProduct($product); // et le produit associé
+            $review->setUser($user); // On associe l'utilisateur connecté
 
             // On l'enrgistre ensuite en base de données
             $manager->persist($review);
