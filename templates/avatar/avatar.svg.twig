@@ -1,0 +1,10 @@
+<svg  xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {{ avatar.size }} {{ avatar.size }}">
+    {% for rowIndex, row in avatar.grid %}
+        {% for colIndex, color in row %}
+            {% if color is defined %}
+                <rect x="{{ colIndex }}" y="{{ rowIndex }}" height="1" width="1" fill="{{ color }}"/>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+</svg>

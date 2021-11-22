@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use DateTimeImmutable;
+use App\Avatar\AvatarHelper;
+use App\Avatar\AvatarSvgFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +18,19 @@ class AccountController extends AbstractController
 {
     private $hasher;
     private $manager;
+    private $avatarSvgFactory;
+    private $avatarHelper;
 
-    public function __construct(UserPasswordHasherInterface $hasher, EntityManagerInterface $manager)
+    public function __construct(
+        UserPasswordHasherInterface $hasher, 
+        EntityManagerInterface $manager,
+        AvatarSvgFactory $avatarSvgFactory,
+        AvatarHelper $avatarHelper)
     {
         $this->hasher = $hasher;
         $this->manager = $manager;
+        $this->avatarSvgFactory = $avatarSvgFactory;
+        $this->avatarHelper = $avatarHelper;
     }
 
     /**
@@ -43,6 +53,11 @@ class AccountController extends AbstractController
             $hashedPassword = $this->hasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
+            // Avatar
+            $svg = $request->request->get('svg');
+            $filename = $this->avatarHelper->save($svg);
+            $user->setAvatar($filename);
+
             // Persistance en BDD avec l'entity manager
             $this->manager->persist($user);
             $this->manager->flush();
@@ -52,9 +67,15 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('security_login');
         }
 
+        // Création d'un avatar
+        $size = AvatarSvgFactory::DEFAULT_SIZE;
+        $nbColors = AvatarSvgFactory::DEFAULT_NB_COLORS;
+        $svg = $this->avatarSvgFactory->createRandomAvatar($size, $nbColors);
+
         // Affichage du formulaire de création de compte
         return $this->render('account/signup.html.twig', [
-            'accountForm' => $accountForm->createView()
+            'accountForm' => $accountForm->createView(),
+            'svg' => $svg
         ]);
     }
 }
