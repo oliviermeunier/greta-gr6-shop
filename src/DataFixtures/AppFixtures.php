@@ -100,6 +100,8 @@ class AppFixtures extends Fixture
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
+            $createdAt = $faker->dateTimeBetween('-5 years', 'now');
+            $user->setCreatedAt(DateTimeImmutable::createFromMutable($createdAt));
 
             $manager->persist($user);
         }
