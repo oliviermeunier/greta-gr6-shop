@@ -10,7 +10,12 @@
     </div>
     <div class="row d-flex justify-content-center mt-3">
         <div class="col-4">
-            {{ svg|raw }}
+            <div class="avatar-container">{{ svg|raw }}</div>
+
+            {{ form_start(generateForm, {'attr':{'class':'avatar-reload-form'}}) }}
+            {{ form_widget(generateForm) }}
+            <button class="btn btn-primary mt-3" type="submit"><i class="fas fa-redo-alt"></i></button>
+            {{ form_end(generateForm) }}
         </div>
 		<div class="col-4">
             {{ form_start(accountForm) }}
@@ -21,4 +26,10 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="module" src="{{ asset('js/signup.js') }}"></script>
 {% endblock %}

@@ -7,6 +7,7 @@ use App\Form\UserType;
 use DateTimeImmutable;
 use App\Avatar\AvatarHelper;
 use App\Avatar\AvatarSvgFactory;
+use App\Form\ReloadAvatarFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,10 +73,16 @@ class AccountController extends AbstractController
         $nbColors = AvatarSvgFactory::DEFAULT_NB_COLORS;
         $svg = $this->avatarSvgFactory->createRandomAvatar($size, $nbColors);
 
+        // Formulaire de rechargement de l'avatar
+        $generateForm = $this->createForm(ReloadAvatarFormType::class, null, [
+            'action' => $this->generateUrl('ajax_avatar_generate')
+        ]);
+
         // Affichage du formulaire de création de compte
         return $this->render('account/signup.html.twig', [
             'accountForm' => $accountForm->createView(),
-            'svg' => $svg
+            'svg' => $svg,
+            'generateForm' => $generateForm->createView()
         ]);
     }
 }
