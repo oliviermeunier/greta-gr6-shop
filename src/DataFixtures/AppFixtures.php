@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Avatar\AvatarHelper;
 use Faker\Factory;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -9,6 +10,7 @@ use App\Entity\Product;
 use Liior\Faker\Prices;
 use App\Entity\Category;
 use Cocur\Slugify\Slugify;
+use App\Avatar\AvatarSvgFactory;
 use Bezhanov\Faker\Provider\Commerce;
 use Bluemmb\Faker\PicsumPhotosProvider;
 use Doctrine\Persistence\ObjectManager;
@@ -19,15 +21,26 @@ class AppFixtures extends Fixture
 {
     private $slugger;
     private $hasher;
+    private $avatarHelper;
+    private $avatarSvgFactory;
 
-    public function __construct(Slugify $slugger, UserPasswordHasherInterface $hasher)
+    public function __construct(
+        Slugify $slugger, 
+        UserPasswordHasherInterface $hasher, 
+        AvatarHelper $avatarHelper,
+        AvatarSvgFactory $avatarSvgFactory)
     {
+        $this->avatarHelper = $avatarHelper;
         $this->hasher = $hasher;
         $this->slugger = $slugger;
+        $this->avatarSvgFactory = $avatarSvgFactory;
     }
 
     public function load(ObjectManager $manager): void
     {
+        //On supprime le dossier avatars
+        $this->avatarHelper->removeAvatarFolder();
+
         // Création de l'objet Faker
         $faker = Factory::create();
         $faker->addProvider(new Commerce($faker));
@@ -102,6 +115,14 @@ class AppFixtures extends Fixture
             $user->setLastname($faker->lastName());
             $createdAt = $faker->dateTimeBetween('-5 years', 'now');
             $user->setCreatedAt(DateTimeImmutable::createFromMutable($createdAt));
+
+            // Avatar
+            $size = AvatarSvgFactory::DEFAULT_SIZE;
+            $nbColors = AvatarSvgFactory::DEFAULT_NB_COLORS;
+            $svg = $this->avatarSvgFactory->createRandomAvatar($size, $nbColors);
+            
+            $filename = $this->avatarHelper->save($svg);
+            $user->setAvatar($filename);
 
             $manager->persist($user);
         }
