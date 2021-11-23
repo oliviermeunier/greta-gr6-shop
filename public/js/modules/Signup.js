@@ -1,5 +1,5 @@
 export class Signup {
-    
+
     constructor(){
         this.reloadForm = document.querySelector('.avatar-reload-form');
         this.reloadForm.addEventListener('submit', this.onSubmitReloadForm.bind(this));
@@ -15,7 +15,8 @@ export class Signup {
 
         // On souhaite envoyer une requête en POST
         const options = {
-            method: 'POST'
+            method: 'POST',
+            body: new FormData(event.currentTarget)
         };
 
         // Envoi de la requête AJAX et récupération de la réponse
