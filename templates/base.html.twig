@@ -16,7 +16,9 @@
     </head>
     <body>
         <header>
-            {% include 'partials/_navbar.html.twig' %}
+            {% block nav %}
+                {% include 'partials/_navbar.html.twig' %}
+            {% endblock %}
         </header>
         <main class="container">
            
