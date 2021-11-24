@@ -8,8 +8,37 @@
 
     <h2 class="my-3">Listing produits</h2>
 
+    <nav>
+        <a href="#" class="btn btn-primary my-5"><i class="fas fa-plus-square"></i> Nouveau produit</a>
+    </nav>
+
     <div class="row">
-        <!-- afficher le tableau de produits ici -->
-        
+        <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom du produit</th>
+                <th scope="col">Catégorie</th>
+                <th scope="col">Prix</th>
+                <th scope="col">Photo</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <th scope="row">{{ product.id }}</th>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>{{ (product.price/100)|format_currency('EUR', locale="fr") }}</td>
+                    <td><img class="product-thumb-sm" src="{{ product.thumbnail }}" alt=""></td>
+                    <td>
+                        <a title="Modifier" href="#" class="btn btn-secondary"><i class="fas fa-edit"></i></a>
+                        <a title="Supprimer" href="#" class="btn btn-danger"><i class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
     </div>
 {% endblock %}
