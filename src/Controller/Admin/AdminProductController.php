@@ -53,16 +53,38 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/edit/{id<\d+>}", name="admin_product_edit")
      */
-    public function edit()
+    public function edit(Request $request, Product $product)
     {
-        dd('FORM EDIT PRODUIT');
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $product->setUpdatedAt(new DateTimeImmutable());
+            
+            $slug = $this->slugger->slugify($product->getName());
+            $product->setSlug($slug);
+
+            $this->manager->flush();
+
+            $this->addFlash('success', 'Produit modifié');
+            return $this->redirectToRoute('admin_dashboard_index');
+        }
+
+        return $this->render('admin/product/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
     } 
 
     /**
      * @Route("/admin/product/delete/{id<\d+>}", name="admin_product_delete")
      */
-    public function delete()
+    public function delete(Product $product)
     {
-        dd('SUPPR PRODUIT');
+        $this->manager->remove($product);
+        $this->manager->flush();
+
+        $this->addFlash('success', 'Produit supprimé');
+        return $this->redirectToRoute('admin_dashboard_index');
     } 
 }

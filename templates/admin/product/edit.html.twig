@@ -1,0 +1,20 @@
+{% extends 'admin/base.admin.html.twig' %}
+
+{% block title %} 
+    {{ parent() }} - {{ form.vars.value.name }}
+{% endblock %}
+
+{% block body %}
+
+    <div class="row d-flex justify-content-center mt-3">
+        <div class="col-4">
+            <h2 class="my-3">Mise à jour du produit : {{ form.vars.value.name }}</h2>
+
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}

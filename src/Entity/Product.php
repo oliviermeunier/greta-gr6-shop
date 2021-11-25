@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -21,26 +22,31 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
+     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $category;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $price;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $thumbnail;
 
@@ -59,6 +65,11 @@ class Product
      * @ORM\OrderBy({"createdAt" = "DESC"})
      */
     private $reviews;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
+    private $updatedAt;
 
     public function __construct()
     {
@@ -180,6 +191,18 @@ class Product
                 $review->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
