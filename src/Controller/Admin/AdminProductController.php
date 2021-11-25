@@ -79,10 +79,17 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/delete/{id<\d+>}", name="admin_product_delete")
      */
-    public function delete(Product $product)
+    public function delete(Product $product, Request $request)
     {
+        $productId = $product->getId();
+        
         $this->manager->remove($product);
         $this->manager->flush();
+
+        // Si c'est une requête AJAX on retourne juste l'id du produit supprimé en JSON
+        if ($request->isXmlHttpRequest()) {
+            return $this->json($productId);
+        }
 
         $this->addFlash('success', 'Produit supprimé');
         return $this->redirectToRoute('admin_dashboard_index');
