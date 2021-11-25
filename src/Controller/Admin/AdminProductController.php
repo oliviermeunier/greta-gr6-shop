@@ -79,10 +79,14 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/delete/{id<\d+>}", name="admin_product_delete")
      */
-    public function delete(Product $product, Request $request)
+    public function delete(Product $product = null, Request $request)
     {
+        if (!$product) {
+            throw $this->createNotFoundException();
+        }
+
         $productId = $product->getId();
-        
+
         $this->manager->remove($product);
         $this->manager->flush();
 

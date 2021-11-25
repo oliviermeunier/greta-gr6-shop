@@ -109,7 +109,15 @@ class AppFixtures extends Fixture
         for ($i=1; $i <= 10; $i++) {
 
             $user = new User();
-            $user->setEmail("user$i@gmail.com");
+
+            if ($i == 1) {
+                $user->setEmail("admin@gmail.com");
+                $user->setRoles(['ROLE_ADMIN']);
+            }
+            else {
+                $user->setEmail("user$i@gmail.com");
+            }
+            
             $user->setPassword($this->hasher->hashPassword($user, 'password'));
             $user->setFirstname($faker->firstName());
             $user->setLastname($faker->lastName());
