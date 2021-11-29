@@ -11,7 +11,7 @@
 				<img src="{{ product.thumbnail }}" alt="" class="img-fluid">
 				<div class="card-body">
 					<span class="badge rounded-pill bg-info">{{ product.category.name }}</span>
-					<h4>{{ (product.price/100)|format_currency('EUR', locale='fr') }}</h4>
+					<h4>{{ product.price|format_price }}</h4>
 					<div class="card-text">{{ product.description }}</div>
 				</div>
 			</div>

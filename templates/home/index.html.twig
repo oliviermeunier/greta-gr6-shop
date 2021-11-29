@@ -13,7 +13,7 @@
                     <img src="{{ product.thumbnail }}" alt="">
                     <div class="card-body">
                         <h3 class="card-title">{{ product.name }}</h3>
-                        <h4>{{ (product.price/100)|format_currency('EUR', locale='fr') }}</h4>
+                        <h4>{{ product.price|format_price }}</h4>
                         <a href="{{ path('product_category', {'slug':product.category.slug}) }}" class="badge bg-primary">{{ product.category.name }}</a>
                         <p class="card-text">{{ product.description|slice(0,150) }}</p>
                         <a href="{{ path('product_show', {'slug': product.slug}) }}" class="btn btn-primary">Voir ce produit</a>
