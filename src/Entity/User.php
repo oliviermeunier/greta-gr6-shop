@@ -288,4 +288,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * L'utilisateur a-t-il le droit de signaler tel avis ?
+     */
+    public function canReport(Review $review):bool 
+    {
+        if ($this == $review->getUser()) {
+            return false;
+        }
+
+        foreach($this->reports as $report) {
+            if ($report->getReview() == $review) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * L'utilisateur a-t-il le droit de signaler tel avis ?
+     */
+    public function canUnreport(Review $review):bool 
+    {
+        foreach($this->reports as $report) {
+            if ($report->getReview() == $review) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

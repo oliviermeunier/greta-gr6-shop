@@ -43,6 +43,22 @@
 						<h4>Note : {{ review.grade }}/5</h4>
 						<em>Ajouté le {{ review.createdAt|date('d/m/Y à H:i') }}</em>
 						<p>{{ review.content }}</p>
+						
+						{% if app.user %}
+							<nav>
+								{% if app.user.canReport(review) %}
+									<a class="btn btn-danger btn-sm" href="{{ path('product_review_reports', {'slug':product.slug, 'id':review.id}) }}" title="Signaler cet avis">
+										<i class="fas fa-skull-crossbones"></i>
+									</a>
+								{% endif %}
+
+								{% if app.user.canUnreport(review) %}
+									<a class="btn btn-primary btn-sm" href="{{ path('product_review_unreports', {'slug':product.slug, 'id':review.id}) }}" title="Supprimer mon signalement">
+										<i class="fas fa-check-circle"></i>
+									</a>
+								{% endif %}
+							</nav>
+						{% endif %}
 					</div>
 				{% endfor %}
 			{% else %} 

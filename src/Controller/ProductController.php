@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Report;
 use App\Entity\Review;
 use DateTimeImmutable;
 use App\Entity\Product;
@@ -59,5 +60,44 @@ class ProductController extends AbstractController {
         return $this->render('product/category.html.twig', [
             'category' => $category
         ]);
+    }
+
+    /**
+     * @Route("/product/{slug}/review/{id}/reports", name="product_review_reports")
+     */
+    public function reports(Review $review, string $slug, EntityManagerInterface $manager)
+    {
+        // On récupère l'utilisateur connecté
+        $user = $this->getUser();
+
+        // Si l'utilisateur n'a pas déjà signalé cet avis... il peut le faire
+        if ($user->canReport($review)) {
+
+            $report = new Report();
+            $report->setUser($this->getUser());
+            $report->setReview($review);
+            $report->setCreatedAt(new DateTimeImmutable);
+    
+            $manager->persist($report);
+            $manager->flush();
+    
+            $this->addFlash('success', 'Avis signalé');
+        }
+        else {
+
+            // Sinon on l'avertit qu'il l'a déjà fait ou bien il est l'auteur de l'avis
+            $this->addFlash('warning', 'Vous ne pouvez pas signaler cet avis');
+        }
+        
+        // On redirige vers la page produit
+        return $this->redirectToRoute('product_show', ['slug' => $slug]);
+    }
+
+    /**
+     * @Route("/product/{slug}/review/{id}/unreports", name="product_review_unreports")
+     */
+    public function unreports(Review $review, string $slug, EntityManagerInterface $manager)
+    {
+       dd('UNREPORTS');
     }
 }
