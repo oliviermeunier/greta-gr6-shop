@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use App\Entity\Product;
 use App\Entity\Category;
 use App\Form\ReviewType;
+use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -96,8 +97,37 @@ class ProductController extends AbstractController {
     /**
      * @Route("/product/{slug}/review/{id}/unreports", name="product_review_unreports")
      */
-    public function unreports(Review $review, string $slug, EntityManagerInterface $manager)
+    public function unreports(Review $review, string $slug, EntityManagerInterface $manager, ReportRepository $reportRepository)
     {
-       dd('UNREPORTS');
+        // On récupère l'utilisateur connecté
+        $user = $this->getUser();
+
+        // Si l'utilisateur peut supprimer son signalement de l'avis... 
+        if ($user->canUnreport($review)) {
+
+            // On récupère le signalement associé à l'utilisateur connecté et à l'avis récupéré en paramètre
+            $report = $reportRepository->findOneBy([
+                'user' => $this->getUser(),
+                'review' => $review
+            ]);
+
+            // S'il existe bien...
+            if ($report) {
+
+                // ... on le supprime !
+                $manager->remove($report);
+                $manager->flush();
+
+                $this->addFlash('success', 'Signalement supprimé');
+            }
+        }
+        else {
+
+            // Sinon on l'avertit qu'il l'a déjà fait ou bien il est l'auteur de l'avis
+            $this->addFlash('warning', 'Vous ne pouvez pas supprimer ce signalement');
+        }
+        
+        // On redirige vers la page produit
+        return $this->redirectToRoute('product_show', ['slug' => $slug]);
     }
 }
