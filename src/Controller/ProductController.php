@@ -9,6 +9,7 @@ use App\Entity\Product;
 use App\Entity\Category;
 use App\Form\ReviewType;
 use App\Repository\ReportRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +20,7 @@ class ProductController extends AbstractController {
     /**
      * @Route("/product/{slug}", name="product_show")
      */
-    public function show(Product $product, Request $request, EntityManagerInterface $manager)
+    public function show(Product $product, Request $request, EntityManagerInterface $manager, ReviewRepository $reviewRepository)
     {
         $user = $this->getUser(); // On récupère l'utilisateur connecté
         $review = new Review(); // On crée un objet Review qui contiendra l'éventuel nouvel avis si l'internaute remplit le formulaire
@@ -47,9 +48,13 @@ class ProductController extends AbstractController {
             return $this->redirectToRoute('product_show', ['slug' => $product->getSlug()]);
         }
 
+        // Sélection des avis associés au produit qui ont moins de 5 signalements
+        $validReviews = $reviewRepository->findValidReviews($product);
+
         return $this->render('product/show.html.twig', [
             'product' => $product,
-            'reviewForm' => $reviewForm->createView()
+            'reviewForm' => $reviewForm->createView(),
+            'validReviews' => $validReviews
         ]);
     }
 
@@ -111,15 +116,11 @@ class ProductController extends AbstractController {
                 'review' => $review
             ]);
 
-            // S'il existe bien...
-            if ($report) {
+            // ... on le supprime !
+            $manager->remove($report);
+            $manager->flush();
 
-                // ... on le supprime !
-                $manager->remove($report);
-                $manager->flush();
-
-                $this->addFlash('success', 'Signalement supprimé');
-            }
+            $this->addFlash('success', 'Signalement supprimé');
         }
         else {
 

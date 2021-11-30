@@ -206,4 +206,16 @@ class Product
 
         return $this;
     }
+
+    public function getValidReviews()
+    {
+        $validReviews = [];
+        foreach ($this->reviews as $review) {
+            if ($review->getReports()->count() < 5) {
+                $validReviews[] = $review;
+            }
+        }
+
+        return $validReviews;
+    }
 }
