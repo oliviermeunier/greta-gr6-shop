@@ -13,6 +13,8 @@ use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController {
@@ -129,6 +131,19 @@ class ProductController extends AbstractController {
         }
         
         // On redirige vers la page produit
+        return $this->redirectToRoute('product_show', ['slug' => $slug]);
+    }
+
+    /**
+     * @Route("/product/{slug}/review/{id<\d+>}/delete", name="product_review_delete")
+     * @Security("isGranted(constant('App\\Security\\Voter\\ReviewVoter::DELETE'),review"))
+     */
+    public function deleteReview(string $slug, Review $review, EntityManagerInterface $manager)
+    {
+        $manager->remove($review);
+        $manager->flush();
+
+        $this->addFlash('success', 'Avis supprimé');
         return $this->redirectToRoute('product_show', ['slug' => $slug]);
     }
 }
