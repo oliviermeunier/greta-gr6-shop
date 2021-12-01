@@ -22,6 +22,8 @@ class CurrencyExtension extends AbstractExtension
         $cents = $priceInCents % 100;
         $euros = ($priceInCents - $cents) / 100;
 
+        $cents = str_pad($cents, 2, '0');
+
         $formattedPrice = "$euros, <span class=\"cents\">$cents</span> €";
         
         return $formattedPrice;

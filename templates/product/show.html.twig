@@ -62,7 +62,7 @@
 									</a>
 								{% endif %}
 
-								{% if is_granted('DELETE', review) %}
+								{% if is_granted(constant('App\\Security\\Voter\\ReviewVoter::DELETE'), review) %}
 									<a class="btn btn-danger btn-sm" href="{{ path('product_review_delete', {'slug':product.slug, 'id':review.id}) }}" title="Supprimer cet avis">
 										<i class="far fa-trash-alt"></i>
 									</a>

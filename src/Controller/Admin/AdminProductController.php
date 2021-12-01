@@ -2,13 +2,14 @@
 
 namespace App\Controller\Admin;
 
+use DateTimeImmutable;
 use App\Entity\Product;
 use App\Form\ProductType;
 use Cocur\Slugify\Slugify;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminProductController extends AbstractController {
@@ -25,7 +26,7 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/add", name="admin_product_add")
      */
-    public function add(Request $request)
+    public function add(Request $request, Slugify $slugger)
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
@@ -37,6 +38,25 @@ class AdminProductController extends AbstractController {
             
             $slug = $this->slugger->slugify($product->getName());
             $product->setSlug($slug);
+
+            /**
+             * @var UploadedFile
+             */
+            $uploadedThumbnailFile = $form->get('thumbnailFile')->getData();
+            
+            // Nettoyage du nom du fichier
+            $originalFilename = pathinfo($uploadedThumbnailFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slugify($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedThumbnailFile->guessExtension();
+
+            // Copie du fichier
+            $uploadedThumbnailFile->move(
+                $this->getParameter('upload_absolute_path'),
+                $newFilename
+            );
+
+            // On enregistre le nom du fichier dans l'entité Product
+            $product->setThumbnail($newFilename);
 
             $this->manager->persist($product);
             $this->manager->flush();

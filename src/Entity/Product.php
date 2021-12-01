@@ -46,7 +46,6 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le champ est obligatoire")
      */
     private $thumbnail;
 

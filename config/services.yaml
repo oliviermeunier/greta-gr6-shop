@@ -8,6 +8,8 @@ parameters:
     avatar_absolute_path: '%kernel.project_dir%/public/%avatar_dir%'
     site_base_url: '%env(SITE_BASE_URL)%'
     avatar_absolute_url: '%site_base_url%/%avatar_dir%'
+    uplaod_dir: 'uploads'
+    upload_absolute_path: '%kernel.project_dir%/public/%uplaod_dir%'
 
 services:
     # default configuration for services in *this* file
