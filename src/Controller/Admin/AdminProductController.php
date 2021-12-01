@@ -129,11 +129,17 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/delete/{id<\d+>}", name="admin_product_delete")
      */
-    public function delete(Product $product = null, Request $request)
+    public function delete(Product $product = null, Request $request, Filesystem $filesystem)
     {
         if (!$product) {
             throw $this->createNotFoundException();
         }
+
+         // Suppression de l'ancien fichier associé au produit
+         $currentThumbnailPath = $this->getParameter('upload_absolute_path') . '/' . $product->getThumbnail();
+         if ($filesystem->exists($currentThumbnailPath)) {
+             $filesystem->remove($currentThumbnailPath);
+         }
 
         $productId = $product->getId();
 
