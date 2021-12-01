@@ -20,6 +20,37 @@ class ProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $thumbnailFileOptions = [
+            'label' => 'Image',
+            'mapped' => false,
+            'constraints' => [
+                new Image([
+                    'mimeTypesMessage' => 'Merci de charger un fichier image (jpg, gif, png)',
+                    'maxSize' => '500k',
+                    'maxSizeMessage' => 'Fichier trop volumineux (500 Ko maximum)'
+                ])
+            ]
+        ];
+
+        // On récupère le produit associé au formulaire
+        $product = $builder->getData();
+
+        // Si on est en AJOUT (nouveau produit)
+        if (!$product->getId()) {
+
+            // Le champ image doit être obligatoire
+            $thumbnailFileOptions['constraints'][] = new NotBlank([
+                'message' => 'Ce champ est obligatoire'
+            ]);
+        }
+
+        // Si on est en MODIFICATION (produit existant)
+        else {
+
+            // Le champ image doit être facultatif (si on souhaite conserver l'image existante)
+            $thumbnailFileOptions['required'] = false;
+        }
+
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom du produit'
@@ -36,20 +67,7 @@ class ProductType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Description du produit'
             ])
-            ->add('thumbnailFile', FileType::class, [
-                'label' => 'Image',
-                'mapped' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Ce champ est obligatoire'
-                    ]),
-                    new Image([
-                        'mimeTypesMessage' => 'Merci de charger un fichier image (jpg, gif, png)',
-                        'maxSize' => '500k',
-                        'maxSizeMessage' => 'Fichier trop volumineux (500 Ko maximum)'
-                    ])
-                ]
-            ])            
+            ->add('thumbnailFile', FileType::class, $thumbnailFileOptions)            
         ;
     }
 

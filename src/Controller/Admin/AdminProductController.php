@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 
 class AdminProductController extends AbstractController {
 
@@ -73,7 +74,7 @@ class AdminProductController extends AbstractController {
     /**
      * @Route("/admin/product/edit/{id<\d+>}", name="admin_product_edit")
      */
-    public function edit(Request $request, Product $product)
+    public function edit(Request $request, Product $product, Slugify $slugger, Filesystem $filesystem)
     {
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
@@ -85,6 +86,35 @@ class AdminProductController extends AbstractController {
             $slug = $this->slugger->slugify($product->getName());
             $product->setSlug($slug);
 
+            /**
+             * @var UploadedFile
+             */
+            $uploadedThumbnailFile = $form->get('thumbnailFile')->getData();
+            
+            // S'il y a un nouveau fichier image uploadé
+            if ($uploadedThumbnailFile) {
+
+                // Suppression de l'ancien fichier associé au produit
+                $currentThumbnailPath = $this->getParameter('upload_absolute_path') . '/' . $product->getThumbnail();
+                if ($filesystem->exists($currentThumbnailPath)) {
+                    $filesystem->remove($currentThumbnailPath);
+                }
+
+                // Nettoyage du nom du fichier
+                $originalFilename = pathinfo($uploadedThumbnailFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slugify($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedThumbnailFile->guessExtension();
+
+                // Copie du fichier
+                $uploadedThumbnailFile->move(
+                    $this->getParameter('upload_absolute_path'),
+                    $newFilename
+                );
+
+                // On enregistre le nom du fichier dans l'entité Product
+                $product->setThumbnail($newFilename);
+            }
+            
             $this->manager->flush();
 
             $this->addFlash('success', 'Produit modifié');
