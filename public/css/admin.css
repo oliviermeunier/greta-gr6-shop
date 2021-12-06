@@ -15,3 +15,8 @@ body, html {
 .cents {
     font-size: 0.7em;
 }
+
+#product_thumbnail {
+    width: 250px;
+    height: auto;
+}

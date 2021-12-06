@@ -1,0 +1,30 @@
+{% extends 'admin/base.admin.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/admin/product.form.js') }}" type="module"></script> 
+{% endblock %}
+
+{% block body %}
+
+    <div class="row d-flex justify-content-center mt-3">
+        <div class="col-4">
+            <h2 class="my-3">{% block page_title %}{% endblock %}</h2>
+
+            {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.category) }}
+            {{ form_row(form.price) }}
+            {{ form_row(form.description) }}
+
+            <div>
+                {{ form_row(form.thumbnailFile) }}
+                <img class="mb-3" src="{{ form.vars.data.id ? asset_upload(form.vars.data.thumbnail) : ''}}" alt="" id="product_thumbnail">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
